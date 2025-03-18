@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 
-const Index = () => {
+const Index: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -53,7 +53,7 @@ const Index = () => {
               {/* Floating UI elements */}
               <div className="absolute -top-6 left-10 glass-panel rounded-lg p-3 shadow-lg animate-float" style={{ animationDelay: '0.1s' }}>
                 <div className="flex items-center gap-2">
-                  <div className="size-2 rounded-full bg-green-500"></div>
+                  <div className="h-2 w-2 rounded-full bg-green-500"></div>
                   <span className="text-sm font-medium">3 people editing</span>
                 </div>
               </div>
@@ -81,20 +81,20 @@ const Index = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
                 {
-                  icon: <FileText className="size-10 text-primary" />,
+                  icon: <FileText className="h-10 w-10 text-primary" />,
                   title: 'Beautiful Documents',
-                  description: 'Create stunning documents with a clean, distraction-free interface that focuses on your content.',
+                  description: 'Create stunning documents with a clean, distraction-free interface that focuses on your content.'
                 },
                 {
-                  icon: <Users className="size-10 text-primary" />,
+                  icon: <Users className="h-10 w-10 text-primary" />,
                   title: 'Real-time Collaboration',
-                  description: 'Work together with your team in real-time, seeing each other's changes as they happen.',
+                  description: 'Work together with your team in real-time, seeing each other's changes as they happen.'
                 },
                 {
-                  icon: <Lock className="size-10 text-primary" />,
+                  icon: <Lock className="h-10 w-10 text-primary" />,
                   title: 'Secure Cloud Storage',
-                  description: 'Your documents are securely stored in the cloud, accessible from anywhere, anytime.',
-                },
+                  description: 'Your documents are securely stored in the cloud, accessible from anywhere, anytime.'
+                }
               ].map((feature, index) => (
                 <div
                   key={index}
