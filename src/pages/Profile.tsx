@@ -8,6 +8,12 @@ import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import { useDocuments } from '@/contexts/DocumentContext';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -21,12 +27,20 @@ const Profile = () => {
   
   const recentDocuments = documents.slice(0, 3);
   
-  const handleLogout = () => {
-    logout();
-    toast('Logged out', {
-      description: 'You have been successfully logged out.',
-    });
-    navigate('/');
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast('Logged out', {
+        description: 'You have been successfully logged out.',
+      });
+      navigate('/');
+    } catch (error) {
+      console.error('Error logging out:', error);
+      toast('Error', {
+        description: 'There was an error logging out. Please try again.',
+        variant: 'destructive',
+      });
+    }
   };
 
   return (
@@ -37,10 +51,20 @@ const Profile = () => {
           <span className="sr-only">Back to documents</span>
         </Button>
         
-        <Button variant="ghost" size="icon" onClick={handleLogout}>
-          <LogOut size={20} />
-          <span className="sr-only">Logout</span>
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <LogOut size={20} />
+              <span className="sr-only">Account options</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={handleLogout} className="text-red-500">
+              <LogOut size={16} className="mr-2" />
+              Logout
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
       
       <div className="flex-1 container max-w-4xl mx-auto p-6">
@@ -82,10 +106,17 @@ const Profile = () => {
             
             <Separator className="my-6" />
             
-            <Button variant="outline" className="w-full gap-2">
-              <Settings size={16} />
-              Edit Profile
-            </Button>
+            <div className="flex justify-between">
+              <Button variant="outline" className="gap-2">
+                <Settings size={16} />
+                Edit Profile
+              </Button>
+              
+              <Button variant="outline" onClick={handleLogout} className="gap-2 text-red-500 hover:bg-red-50 hover:text-red-600">
+                <LogOut size={16} />
+                Logout
+              </Button>
+            </div>
           </div>
           
           <div className="glass-card p-6 rounded-xl animate-fade-up" style={{ animationDelay: '200ms' }}>

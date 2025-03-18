@@ -1,17 +1,27 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, FileText, LogIn, UserPlus, User } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Menu, X, FileText, LogIn, UserPlus, User, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const { user, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const { user, isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,6 +34,22 @@ export const Header = () => {
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast('Logged out', {
+        description: 'You have been successfully logged out.',
+      });
+      navigate('/');
+    } catch (error) {
+      console.error('Error logging out:', error);
+      toast('Error', {
+        description: 'There was an error logging out. Please try again.',
+        variant: 'destructive',
+      });
+    }
   };
 
   const navItems = [
@@ -80,14 +106,31 @@ export const Header = () => {
           </Button>
           
           {isAuthenticated ? (
-            <Button asChild variant="ghost" className="rounded-full w-10 h-10 p-0 overflow-hidden">
-              <Link to="/profile" aria-label="Profile">
-                <Avatar>
-                  <AvatarImage src={user?.avatar} alt={user?.name || ''} />
-                  <AvatarFallback>{user?.name?.charAt(0) || 'U'}</AvatarFallback>
-                </Avatar>
-              </Link>
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="rounded-full w-10 h-10 p-0 overflow-hidden">
+                  <Avatar>
+                    <AvatarImage src={user?.avatar} alt={user?.name || ''} />
+                    <AvatarFallback>{user?.name?.charAt(0) || 'U'}</AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuGroup>
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile" className="flex items-center">
+                      <User size={16} className="mr-2" />
+                      Profile
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout} className="text-red-500">
+                  <LogOut size={16} className="mr-2" />
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
             <Button asChild className="rounded-full gap-2">
               <Link to="/login">
@@ -142,6 +185,21 @@ export const Header = () => {
                 {item.name}
               </Link>
             ))}
+            
+            {isAuthenticated && (
+              <Button 
+                variant="destructive" 
+                onClick={() => {
+                  handleLogout();
+                  setIsMobileMenuOpen(false);
+                }}
+                className="animate-fade-up flex items-center gap-2"
+                style={{ '--index': navItems.length + authItems.length + 1 } as React.CSSProperties}
+              >
+                <LogOut size={18} />
+                Logout
+              </Button>
+            )}
             
             <Button 
               asChild 
