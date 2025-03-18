@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { Save, Share, Users, ChevronDown, MoreHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { toast } from '@/components/ui/sonner';
+import { toast } from 'sonner';
 
 interface DocumentEditorProps {
   id?: string;
@@ -22,7 +21,6 @@ export const DocumentEditor = ({
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   
-  // Simulate auto-save
   useEffect(() => {
     const autoSaveInterval = setInterval(() => {
       if (content.trim() || title !== 'Untitled Document') {
@@ -38,13 +36,11 @@ export const DocumentEditor = ({
     
     setIsSaving(true);
     
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 800));
     
     setLastSaved(new Date());
     setIsSaving(false);
     
-    // Show toast notification
     toast('Document saved', {
       description: 'All changes have been saved to the cloud.',
     });
@@ -58,7 +54,6 @@ export const DocumentEditor = ({
 
   return (
     <div className="flex flex-col h-full">
-      {/* Toolbar */}
       <div className="flex items-center justify-between py-2 px-6 border-b">
         <div className="flex items-center gap-2">
           <input
@@ -173,7 +168,6 @@ export const DocumentEditor = ({
         </div>
       </div>
       
-      {/* Editor */}
       <div className="flex-1 overflow-y-auto p-6 md:p-12 glass-panel">
         <div className="max-w-4xl mx-auto">
           <textarea

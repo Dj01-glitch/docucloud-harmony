@@ -1,10 +1,9 @@
-
 import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DocumentEditor } from '@/components/editor/DocumentEditor';
-import { toast } from '@/components/ui/sonner';
+import { toast } from 'sonner';
 
 // Sample data for existing documents (in a real app, this would be fetched from an API)
 const sampleDocuments = {

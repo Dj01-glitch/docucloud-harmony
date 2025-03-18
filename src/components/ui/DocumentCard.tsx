@@ -11,6 +11,7 @@ export interface DocumentProps {
   lastEdited: string;
   collaborators?: number;
   className?: string;
+  style?: React.CSSProperties;
 }
 
 export const DocumentCard = ({
@@ -20,6 +21,7 @@ export const DocumentCard = ({
   lastEdited,
   collaborators = 0,
   className,
+  style,
 }: DocumentProps) => {
   return (
     <Link
@@ -28,6 +30,7 @@ export const DocumentCard = ({
         'glass-card p-6 block group hover:shadow-md hover:scale-[1.02]',
         className
       )}
+      style={style}
     >
       <div className="flex items-start justify-between mb-3">
         <div className="flex gap-3 items-center">
