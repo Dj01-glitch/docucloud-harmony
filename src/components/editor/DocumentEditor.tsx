@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Save, Share, Users, ChevronDown, MoreHorizontal, Copy, Eye, Edit, Link as LinkIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -55,7 +54,6 @@ export const DocumentEditor = ({
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   
-  // Load document details including isPublic status
   useEffect(() => {
     if (id) {
       const doc = getDocument(id);
@@ -85,26 +83,47 @@ export const DocumentEditor = ({
     if (id) {
       // Update existing document
       updateDocument(id, { title, content });
+      setLastSaved(new Date());
+      setIsSaving(false);
+      
+      toast('Document saved', {
+        description: 'All changes have been saved to the cloud.',
+      });
     } else {
       // Create new document and navigate to it
-      const newDoc = await createDocument(title, content);
-      navigate(`/editor/${newDoc.id}`, { replace: true });
+      try {
+        const newDoc = await createDocument(title, content);
+        navigate(`/editor/${newDoc.id}`, { replace: true });
+        setLastSaved(new Date());
+        
+        toast('Document saved', {
+          description: 'All changes have been saved to the cloud.',
+        });
+      } catch (error) {
+        console.error('Error creating document:', error);
+        toast('Error saving document', {
+          description: 'There was an error saving your document. Please try again.',
+        });
+      } finally {
+        setIsSaving(false);
+      }
     }
-    
-    setLastSaved(new Date());
-    setIsSaving(false);
-    
-    toast('Document saved', {
-      description: 'All changes have been saved to the cloud.',
-    });
   };
   
   const handleShare = async () => {
     if (!id) {
       // If this is a new document, save it first
-      const newDoc = await createDocument(title, content);
-      navigate(`/editor/${newDoc.id}`, { replace: true });
-      return;
+      try {
+        const newDoc = await createDocument(title, content);
+        navigate(`/editor/${newDoc.id}`, { replace: true });
+        return;
+      } catch (error) {
+        console.error('Error creating document before sharing:', error);
+        toast('Error saving document', {
+          description: 'There was an error saving your document before sharing. Please try again.',
+        });
+        return;
+      }
     }
     
     // Toggle the document's public status and get the share ID

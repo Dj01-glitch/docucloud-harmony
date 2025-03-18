@@ -72,7 +72,7 @@ interface DocumentContextType {
   getDocument: (id: string) => Document | undefined;
   getDocumentByShareId: (shareId: string) => Promise<Document | null>;
   updateDocument: (id: string, updates: Partial<Document>) => void;
-  createDocument: (title?: string, content?: string) => Document;
+  createDocument: (title?: string, content?: string) => Promise<Document>; // Changed return type to Promise<Document>
   toggleDocumentPublic: (id: string) => Promise<string | null>;
   loadDocuments: () => Promise<void>;
   loading: boolean;
