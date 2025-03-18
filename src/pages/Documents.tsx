@@ -7,55 +7,10 @@ import { Input } from '@/components/ui/input';
 import { DocumentCard } from '@/components/ui/DocumentCard';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-
-// Sample data for documents
-const initialDocuments = [
-  {
-    id: '1',
-    title: 'Project Roadmap',
-    excerpt: 'Overview of the Q3 project timeline, milestones, and deliverables.',
-    lastEdited: 'Today at 2:45 PM',
-    collaborators: 3,
-  },
-  {
-    id: '2',
-    title: 'Meeting Notes',
-    excerpt: 'Notes from the weekly product team meeting with action items.',
-    lastEdited: 'Yesterday',
-    collaborators: 2,
-  },
-  {
-    id: '3',
-    title: 'Design Guidelines',
-    excerpt: 'Brand style guide with color palette, typography, and component specifications.',
-    lastEdited: '2 days ago',
-    collaborators: 1,
-  },
-  {
-    id: '4',
-    title: 'User Research',
-    excerpt: 'Summary of user interviews and key findings from the recent user testing.',
-    lastEdited: 'Last week',
-    collaborators: 0,
-  },
-  {
-    id: '5',
-    title: 'Quarterly Report',
-    excerpt: 'Q2 financial report with revenue analysis and projections.',
-    lastEdited: '2 weeks ago',
-    collaborators: 4,
-  },
-  {
-    id: '6',
-    title: 'Marketing Strategy',
-    excerpt: 'Digital marketing plan for the upcoming product launch.',
-    lastEdited: '3 weeks ago',
-    collaborators: 2,
-  },
-];
+import { useDocuments } from '@/contexts/DocumentContext';
 
 const Documents = () => {
-  const [documents, setDocuments] = useState(initialDocuments);
+  const { documents } = useDocuments();
   const [searchQuery, setSearchQuery] = useState('');
   
   const filteredDocuments = documents.filter(doc => 
@@ -109,7 +64,7 @@ const Documents = () => {
                   key={doc.id}
                   {...doc}
                   className="animate-fade-up"
-                  style={{ animationDelay: `${index * 50}ms` } as React.CSSProperties}
+                  style={{ animationDelay: `${index * 50}ms` }}
                 />
               ))}
             </div>

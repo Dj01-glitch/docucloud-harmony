@@ -1,9 +1,12 @@
+
 import React, { useState, useEffect } from 'react';
 import { Save, Share, Users, ChevronDown, MoreHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
+import { useDocuments } from '@/contexts/DocumentContext';
 
 interface DocumentEditorProps {
   id?: string;
@@ -20,6 +23,8 @@ export const DocumentEditor = ({
   const [content, setContent] = useState(initialContent);
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const { updateDocument, createDocument } = useDocuments();
+  const navigate = useNavigate();
   
   useEffect(() => {
     const autoSaveInterval = setInterval(() => {
@@ -37,6 +42,15 @@ export const DocumentEditor = ({
     setIsSaving(true);
     
     await new Promise(resolve => setTimeout(resolve, 800));
+    
+    if (id) {
+      // Update existing document
+      updateDocument(id, { title, content });
+    } else {
+      // Create new document and navigate to it
+      const newDoc = createDocument(title, content);
+      navigate(`/editor/${newDoc.id}`, { replace: true });
+    }
     
     setLastSaved(new Date());
     setIsSaving(false);

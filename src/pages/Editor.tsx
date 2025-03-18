@@ -1,41 +1,41 @@
-import React, { useEffect } from 'react';
+
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DocumentEditor } from '@/components/editor/DocumentEditor';
 import { toast } from 'sonner';
-
-// Sample data for existing documents (in a real app, this would be fetched from an API)
-const sampleDocuments = {
-  '1': {
-    title: 'Project Roadmap',
-    content: 'This document outlines our Q3 project roadmap with key milestones and deliverables.'
-  },
-  '2': {
-    title: 'Meeting Notes',
-    content: 'Notes from our weekly product team meeting with action items.'
-  },
-  '3': {
-    title: 'Design Guidelines',
-    content: 'Our brand style guide with color palette, typography, and component specifications.'
-  }
-};
+import { useDocuments } from '@/contexts/DocumentContext';
 
 const Editor = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  
-  const documentData = id ? sampleDocuments[id as keyof typeof sampleDocuments] : null;
+  const { getDocument, createDocument } = useDocuments();
+  const [documentData, setDocumentData] = useState<{ title: string; content: string } | null>(null);
   
   useEffect(() => {
-    // If an ID is provided but the document doesn't exist, show an error toast
-    if (id && !documentData) {
-      toast('Document not found', {
-        description: 'The document you are looking for does not exist.',
+    if (id) {
+      // Editing existing document
+      const doc = getDocument(id);
+      if (doc) {
+        setDocumentData({
+          title: doc.title,
+          content: doc.content
+        });
+      } else {
+        toast('Document not found', {
+          description: 'The document you are looking for does not exist.',
+        });
+        navigate('/documents');
+      }
+    } else {
+      // New document - initialize with empty content
+      setDocumentData({
+        title: 'Untitled Document',
+        content: ''
       });
-      navigate('/documents');
     }
-  }, [id, documentData, navigate]);
+  }, [id, getDocument, navigate]);
   
   return (
     <div className="flex flex-col h-screen">
@@ -52,11 +52,13 @@ const Editor = () => {
       </div>
       
       <div className="flex-1 overflow-hidden">
-        <DocumentEditor
-          id={id}
-          initialTitle={documentData?.title}
-          initialContent={documentData?.content}
-        />
+        {documentData && (
+          <DocumentEditor
+            id={id}
+            initialTitle={documentData.title}
+            initialContent={documentData.content}
+          />
+        )}
       </div>
     </div>
   );
