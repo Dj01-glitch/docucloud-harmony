@@ -88,7 +88,7 @@ const Index: React.FC = () => {
                 {
                   icon: <Users className="h-10 w-10 text-primary" />,
                   title: 'Real-time Collaboration',
-                  description: 'Work together with your team in real-time, seeing each other's changes as they happen.'
+                  description: 'Work together with your team in real-time, seeing each other\'s changes as they happen.'
                 },
                 {
                   icon: <Lock className="h-10 w-10 text-primary" />,
