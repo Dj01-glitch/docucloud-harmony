@@ -1,7 +1,9 @@
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { Session, User } from '@supabase/supabase-js';
 
-interface User {
+interface AuthUser {
   id: string;
   name: string;
   email: string;
@@ -9,11 +11,12 @@ interface User {
 }
 
 interface AuthContextType {
-  user: User | null;
+  user: AuthUser | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
+  session: Session | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -26,40 +29,81 @@ export const useAuth = () => {
   return context;
 };
 
-// Mock user data
-const mockUser: User = {
-  id: '1',
-  name: 'Demo User',
-  email: 'demo@example.com',
-  avatar: 'https://i.pravatar.cc/150?u=demo@example.com',
-};
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session) {
+        setUser({
+          id: session.user.id,
+          email: session.user.email || '',
+          name: session.user.user_metadata.name || session.user.email?.split('@')[0] || 'User',
+          avatar: session.user.user_metadata.avatar_url,
+        });
+      }
+      setLoading(false);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      if (session) {
+        setUser({
+          id: session.user.id,
+          email: session.user.email || '',
+          name: session.user.user_metadata.name || session.user.email?.split('@')[0] || 'User',
+          avatar: session.user.user_metadata.avatar_url,
+        });
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
 
   const login = async (email: string, password: string) => {
-    // In a real app, this would make an API call
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-    
-    // For demo purposes, any credentials will work and return the mock user
-    setUser(mockUser);
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      console.error('Error logging in:', error.message);
+      throw new Error(error.message);
+    }
   };
 
   const signup = async (name: string, email: string, password: string) => {
-    // In a real app, this would make an API call
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-    
-    // Create a new user with the provided details
-    setUser({
-      id: Date.now().toString(),
-      name,
+    const { error } = await supabase.auth.signUp({
       email,
-      avatar: `https://i.pravatar.cc/150?u=${email}`,
+      password,
+      options: {
+        data: {
+          name,
+        },
+      },
     });
+
+    if (error) {
+      console.error('Error signing up:', error.message);
+      throw new Error(error.message);
+    }
   };
 
-  const logout = () => {
-    setUser(null);
+  const logout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error('Error logging out:', error.message);
+      throw new Error(error.message);
+    }
   };
 
   return (
@@ -68,9 +112,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       isAuthenticated: !!user, 
       login, 
       signup, 
-      logout 
+      logout,
+      session
     }}>
-      {children}
+      {!loading && children}
     </AuthContext.Provider>
   );
 };

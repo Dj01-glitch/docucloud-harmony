@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Mail, Lock, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -20,8 +20,15 @@ type LoginValues = z.infer<typeof loginSchema>;
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  
+  useEffect(() => {
+    // Redirect if already authenticated
+    if (isAuthenticated) {
+      navigate('/documents');
+    }
+  }, [isAuthenticated, navigate]);
   
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
@@ -35,13 +42,14 @@ const Login = () => {
     try {
       setIsLoading(true);
       await login(values.email, values.password);
-      toast('Login successful', {
+      toast.success('Login successful', {
         description: 'Welcome back to CloudDocs!',
       });
       navigate('/documents');
     } catch (error) {
-      toast('Login failed', {
-        description: 'Please check your credentials and try again.',
+      console.error('Login error:', error);
+      toast.error('Login failed', {
+        description: error instanceof Error ? error.message : 'Please check your credentials and try again.',
       });
     } finally {
       setIsLoading(false);

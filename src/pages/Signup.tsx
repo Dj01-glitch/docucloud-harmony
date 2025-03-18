@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Mail, Lock, User, UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -25,8 +25,15 @@ type SignupValues = z.infer<typeof signupSchema>;
 
 const Signup = () => {
   const navigate = useNavigate();
-  const { signup } = useAuth();
+  const { signup, isAuthenticated } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  
+  useEffect(() => {
+    // Redirect if already authenticated
+    if (isAuthenticated) {
+      navigate('/documents');
+    }
+  }, [isAuthenticated, navigate]);
   
   const form = useForm<SignupValues>({
     resolver: zodResolver(signupSchema),
@@ -42,13 +49,14 @@ const Signup = () => {
     try {
       setIsLoading(true);
       await signup(values.name, values.email, values.password);
-      toast('Account created', {
-        description: 'Welcome to CloudDocs!',
+      toast.success('Account created', {
+        description: 'Welcome to CloudDocs! Please check your email to confirm your account.',
       });
       navigate('/documents');
     } catch (error) {
-      toast('Signup failed', {
-        description: 'There was an error creating your account. Please try again.',
+      console.error('Signup error:', error);
+      toast.error('Signup failed', {
+        description: error instanceof Error ? error.message : 'There was an error creating your account. Please try again.',
       });
     } finally {
       setIsLoading(false);
