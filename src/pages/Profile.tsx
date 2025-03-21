@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Settings, LogOut, User, Mail, FileText, Clock } from 'lucide-react';
@@ -38,7 +37,6 @@ const Profile = () => {
       console.error('Error logging out:', error);
       toast('Error', {
         description: 'There was an error logging out. Please try again.',
-        variant: 'destructive',
       });
     }
   };

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, FileText, LogIn, UserPlus, User, LogOut } from 'lucide-react';
@@ -47,7 +46,6 @@ export const Header = () => {
       console.error('Error logging out:', error);
       toast('Error', {
         description: 'There was an error logging out. Please try again.',
-        variant: 'destructive',
       });
     }
   };
