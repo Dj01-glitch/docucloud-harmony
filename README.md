@@ -1,4 +1,4 @@
-# Welcome to DocuCloud Harmony App
+# Welcome to DocuCloud Harmony App - A Cloud Based Cloud Collaborator Tool
 
 ## Project info
 
