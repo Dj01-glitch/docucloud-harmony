@@ -2,7 +2,7 @@
 
 ## Project info
 
-**URL**: docucloud-harmony.lovable.app
+**URL**: https://docucloud-harmony.lovable.app/
 
 ## How can I edit this code?
 
