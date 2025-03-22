@@ -1,7 +1,3 @@
-
-
-https://github.com/user-attachments/assets/3bbd36f5-dd8d-487e-af21-16ab7ce78f15
-
 # Welcome to DocuCloud Harmony App - A Cloud Based Cloud Collaborator Tool
 
 ## Project info
@@ -57,3 +53,7 @@ This project is built with .
 - React
 - shadcn-ui
 - Tailwind CSS
+
+# Video Demo
+
+https://github.com/user-attachments/assets/3bbd36f5-dd8d-487e-af21-16ab7ce78f15
