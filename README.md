@@ -1,4 +1,4 @@
-# Welcome to your Lovable project
+# Welcome to DocuCloud Harmony App
 
 ## Project info
 
@@ -7,12 +7,6 @@
 ## How can I edit this code?
 
 There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/79310ee5-5cd5-4ca9-9c66-f1b46e2f9081) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
 
 **Use your preferred IDE**
 
